@@ -1,0 +1,48 @@
+
+class LZW(object):
+    def Encode(self, data):
+        result=[]
+        counter=0
+        tableEncode={}
+        for c in "#ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+            tableEncode[c]=counter
+            counter+=1
+        sequence = ''                       
+        for c in data:
+            if '#' == c:
+                result.append(tableEncode[sequence])
+                break
+            sequenceC = sequence + c
+            if sequenceC not in tableEncode:
+                tableEncode[sequenceC]=counter
+                counter+=1
+                result.append(tableEncode[sequence])
+                sequence=c
+            else:
+                sequence=sequenceC                    
+        return result
+    
+    def Decode(self, data):
+        result=[]
+        counter=0
+        tableDecode={}
+        conjecture=''
+        for c in "#ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+            tableDecode[counter]=c
+            counter+=1
+            
+        result.append(tableDecode[data[0]]) 
+        conjecture=tableDecode[data[0]]
+        for d in data[1:]:
+            result.append(tableDecode[d])
+            tmp=conjecture+tableDecode[d][0]  ##### only append one char
+            tableDecode[counter]=tmp
+            counter+=1
+            conjecture = tableDecode[d]
+        return ''.join(result)
+                                   
+lzw=LZW()
+assert [20, 15, 2, 5, 15, 18, 14, 15, 20, 27, 29, 31, 36, 30, 32, 34] == lzw.Encode("TOBEORNOTTOBEORTOBEORNOT#")
+assert "TOBEORNOTTOBEORTOBEORNOT"==lzw.Decode([20, 15, 2, 5, 15, 18, 14, 15, 20, 27, 29, 31, 36, 30, 32, 34])
+test="HELLOWORLDHELLOWORLDHETOBEORNOTTOBEORTOBEORNOTLLOWORLDHELLOWORLDHELLOWORLD"
+assert test == lzw.Decode(lzw.Encode(test+'#'))
