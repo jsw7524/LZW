@@ -47,9 +47,11 @@ class LZW(object):
             tableDecode[counter]=c
             counter+=1
             
-        result.append(tableDecode[data[0]]) 
+        result.append(tableDecode[data[0]])
         conjecture=tableDecode[data[0]]
         for d in data[1:]:
+            if d == counter: #tricky case
+                tableDecode[counter]=conjecture+conjecture[0]
             result.append(tableDecode[d])
             tmp=conjecture+tableDecode[d][0]  ##### only append one char
             tableDecode[counter]=tmp
@@ -58,6 +60,9 @@ class LZW(object):
         return ''.join(result)
                           
 lzw=LZW(alphabet=Alphabet().GetCapitalLetters())
+
+assert [1, 2, 27, 29]==lzw.Encode("ABABABA")
+assert "ABABABA"==lzw.Decode([1, 2, 27, 29])
 assert [20, 15, 2, 5, 15, 18, 14, 15, 20, 27, 29, 31, 36, 30, 32, 34] == lzw.Encode("TOBEORNOTTOBEORTOBEORNOT")
 assert "TOBEORNOTTOBEORTOBEORNOT"==lzw.Decode([20, 15, 2, 5, 15, 18, 14, 15, 20, 27, 29, 31, 36, 30, 32, 34])
 test="HELLOWORLDHELLOWORLDHETOBEORNOTTOBEORTOBEORNOTLLOWORLDHELLOWORLDHELLOWORLD"
@@ -66,10 +71,10 @@ assert test == lzw.Decode(lzw.Encode(test))
 lzw=LZW(alphabet=Alphabet().GetAlphabetASCII())
 test="Canada is a country in North America. Its ten provinces and three territories extend from the Atlantic to the Pacific and northward into the Arctic Ocean, covering 9.98 million square kilometres (3.85 million square miles), making it the world's second-largest country by total area. Its southern and western border with the United States, stretching 8,891 kilometres (5,525 mi), is the world's longest bi-national land border. Canada's capital is Ottawa, and its three largest metropolitan areas are Toronto, Montreal, and Vancouver."
 assert test == lzw.Decode(lzw.Encode(test))
-        
-        
-        
-        
-        
+
+#
+#
+#
+#
         
         
